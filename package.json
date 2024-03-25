@@ -1,5 +1,5 @@
 {
-  "name": "music_restaurant_fe",
+  "name": "stream_music_fe",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,15 +9,22 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "axios": "^1.5.1",
+    "firebase": "^10.6.0",
+    "i18next": "^23.6.0",
+    "next": "13.5.6",
+    "next-intl": "^3.0.0-beta.19",
     "react": "^18",
     "react-dom": "^18",
-    "next": "13.5.6"
+    "react-icons": "^4.11.0",
+    "socket.io": "^4.7.2"
   },
   "devDependencies": {
     "autoprefixer": "^10",
-    "postcss": "^8",
-    "tailwindcss": "^3",
+    "encoding": "^0.1.13",
     "eslint": "^8",
-    "eslint-config-next": "13.5.6"
+    "eslint-config-next": "13.5.6",
+    "postcss": "^8",
+    "tailwindcss": "^3"
   }
 }
