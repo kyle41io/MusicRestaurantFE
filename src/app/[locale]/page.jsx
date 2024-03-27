@@ -3,8 +3,7 @@
 function Page() {
 
   return (
-    <div>
-    </div>
+    <div>Page</div>
   );
 }
 
