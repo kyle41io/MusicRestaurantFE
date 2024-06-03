@@ -1,0 +1,52 @@
+
+.my-playlist-songs {
+    display: flex;
+    max-height: 100%;
+    width: 100%;
+    flex-direction: column;
+    overflow: hidden;
+    overflow-y: scroll;
+    overscroll-behavior: contain;
+}
+
+.my-playlist-song {
+    z-index: 0;
+    display: flex;
+    padding: 12px;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+}
+
+.song-info {
+    color: white;
+}
+
+.song-views {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: white;
+}
+
+.loading {
+    z-index: 0;
+    min-height: 32px;
+    padding: 12px;
+    display: flex;
+    justify-content: center;
+    display: none;
+}
+
+.appear {
+    display: block;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    } to {
+        transform: rotate(360deg);
+    }
+}

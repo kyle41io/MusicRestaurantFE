@@ -1,9 +1,11 @@
-import React from 'react'
+"use client";
+import React from "react";
+import { useTranslations } from "next-intl";
 
 const LivePage = () => {
-  return (
-    <div>Live Page</div>
-  )
-}
+  const t = useTranslations("Home");
 
-export default LivePage
+  return <button onClick={console.log(1)}>{t("live_music")}</button>;
+};
+
+export default LivePage;

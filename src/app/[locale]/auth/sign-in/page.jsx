@@ -1,7 +1,17 @@
-import React from "react";
+'use client'
+
+import { useRouter } from "next/navigation";
+
+import SignIn from "@/components/pages/auth/sign-in/SignIn";
 
 const SignInPage = () => {
-  return <div>Sign In Page</div>;
+  const router = useRouter();
+
+  if (localStorage.getItem('token')) {
+    router.push('/home')
+  }
+
+  return <SignIn />;
 };
 
 export default SignInPage;
