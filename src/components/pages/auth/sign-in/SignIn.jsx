@@ -35,7 +35,7 @@ const SignIn = () => {
 
     let responseHolder = {};
 
-    fetch('http://192.168.1.123:3000/api/auth', {
+    fetch('http://localhost:3000/api/auth', {
       method: 'POST',
       headers: {
         "Content-Type": "application/json",

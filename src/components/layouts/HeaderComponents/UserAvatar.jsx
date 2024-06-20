@@ -1,23 +1,22 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-
+import Link from 'next-intl/link';
 import Image from "next/image";
 import { BiSolidChevronDown } from "react-icons/bi";
-
 import avatar from "@/assets/images/avatar.png";
-
 import { useTranslations } from "next-intl";
-
 
 export default function UserAvatar() {
   const menuRef = useRef(null);
   const [showMenu, setShowMenu] = useState(false);
+  const [showLanguageOptions, setShowLanguageOptions] = useState(false);
   const trans = useTranslations("Header");
 
   useEffect(() => {
     const clickOutside = (e) => {
       if (menuRef.current && !menuRef.current.contains(e.target)) {
         setShowMenu(false);
+        setShowLanguageOptions(false);
       }
     };
 
@@ -51,9 +50,24 @@ export default function UserAvatar() {
           <li className="h-12 py-3 px-4 cursor-pointer font-medium text-thirdBlack hover:bg-gray-100">
             {trans("my_profile")}
           </li>
-          <li className="h-12 py-3 px-4 cursor-pointer font-medium text-thirdBlack flex justify-between hover:bg-gray-100">
+          <li
+            className="h-12 py-3 px-4 cursor-pointer font-medium text-thirdBlack flex justify-between hover:bg-gray-100 relative"
+            onMouseEnter={() => setShowLanguageOptions(true)}
+            onMouseLeave={() => setShowLanguageOptions(false)}
+          >
             <p>{trans("changeLanguage")}</p>
-            <p className="text-primaryGray">Vi</p>
+            <div className="text-primaryGray flex flex-col absolute left-[100%] top-0">
+              {showLanguageOptions && (
+                <>
+                  <Link href={"/"} locale="en" className="h-12 w-32 py-3 px-4 cursor-pointer font-medium hover:bg-gray-200 rounded-sm" style={{ boxShadow: "0px 4px 4px 0px rgba(171, 171, 171, 0.25)" }}>
+                    English
+                  </Link>
+                  <Link href={"/"} locale="vi" className="h-12 w-32 py-3 px-4 cursor-pointer font-medium bg-gray-100 hover:bg-gray-200 rounded-sm" style={{ boxShadow: "0px 4px 4px 0px rgba(171, 171, 171, 0.25)" }}>
+                    Tiếng Việt
+                  </Link>
+                </>
+              )}
+            </div>
           </li>
           <li className="h-12 py-3 px-4 cursor-pointer font-medium text-thirdBlack hover:bg-gray-100">
             <span className="text-primaryError">{trans("sign_out")}</span>

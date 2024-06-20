@@ -40,7 +40,7 @@ export default function CommentSection() {
 
         {/* Sort dropdown */}
         <div
-          className="flex w-[145px] h-[26px] gap-2 items-center border border-primary rounded mb-2 p-2 text-primary text-xs hover:bg-primary hover:text-white cursor-pointer relative"
+          className="flex w-[145px] h-[26px] gap-2 items-center border border-primary rounded mb-2 p-2 text-primary text-xs hover:bg-primary hover:text-white cursor-pointer relative z-50"
           onClick={() => setShowOption(!showOption)}
         >
           <span>Sorted by: {selectedOption}</span>

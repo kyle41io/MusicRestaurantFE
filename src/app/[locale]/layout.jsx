@@ -11,7 +11,7 @@ import MusicDetailProvider from "@/store/MusicDetailProvider";
 import "@/styles/globals.css";
 
 export const metadata = {
-  title: "Music Is Life",
+  title: "Music Restaurant",
   description: "Enjoy sharing your taste",
 };
 const poppins = Poppins({

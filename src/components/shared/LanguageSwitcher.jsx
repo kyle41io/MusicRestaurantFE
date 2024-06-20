@@ -1,3 +1,6 @@
+"use client";
+import { Link } from "next-intl/link";
+
 export default function LanguageSwitcher() {
   return (
     <div>

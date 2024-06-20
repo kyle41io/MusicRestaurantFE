@@ -36,7 +36,7 @@ export default function Header() {
             />
 
             <div className="text-2xl text-white uppercase font-normal hidden xl:block">
-              Music is life
+              Music Restaurant
             </div>
           </div>
         </Link>

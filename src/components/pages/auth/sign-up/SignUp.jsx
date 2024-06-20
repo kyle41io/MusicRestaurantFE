@@ -47,7 +47,7 @@ function SignUp() {
 
     let responsePlaceHolder = {};
 
-    fetch("http://192.168.1.123:3000/api/auth/new", {
+    fetch("http://localhost:3000/api/auth/new", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
