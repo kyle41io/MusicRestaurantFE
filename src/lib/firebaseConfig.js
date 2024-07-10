@@ -3,12 +3,14 @@ import { getStorage } from "firebase/storage";
 
 // Your web app's Firebase configuration
 const app = initializeApp({
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: "music-is-life-dolphin.firebaseapp.com",
-  projectId: "music-is-life-dolphin",
-  storageBucket: "music-is-life-dolphin.appspot.com",
-  messagingSenderId: "1029126740258",
-  appId: "1:1029126740258:web:40ca547d8e377ca6d06d7b",
+  apiKey: "AIzaSyD6eUut5So39GOYSsh2EsF_O4N3xYjoLik",
+  authDomain: "ecommer-dcb3d.firebaseapp.com",
+  databaseURL: "https://ecommer-dcb3d-default-rtdb.firebaseio.com",
+  projectId: "ecommer-dcb3d",
+  storageBucket: "ecommer-dcb3d.appspot.com",
+  messagingSenderId: "309986122616",
+  appId: "1:309986122616:web:7128aeb2a2cbd68cf9c68d",
+  measurementId: "G-0G2W3QHYWQ"
 });
 
 const storage = getStorage(app);

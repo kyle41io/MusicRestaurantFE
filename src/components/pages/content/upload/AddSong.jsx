@@ -1,5 +1,4 @@
 import Image from "next/image";
-
 import SearchImage from "@/assets/images/search.png";
 import SearchIcon from "@/assets/icons/SearchIcon";
 
