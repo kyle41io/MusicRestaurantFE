@@ -4,6 +4,7 @@ import { Poppins } from "next/font/google";
 import { notFound } from "next/navigation";
 
 import DeleteModal from "@/components/pages/content/music-detail/DeleteModal";
+import UserModal from "@/components/layouts/UserModal"
 import Footer from "@/components/layouts/Footer";
 import Header from "@/components/layouts/Header";
 import MusicDetailProvider from "@/store/MusicDetailProvider";
@@ -39,6 +40,7 @@ export default async function LocaleLayout({ children, params: { locale } }) {
               <div className="w-full h-28"></div>
             </main>
             <DeleteModal />
+            <UserModal />
             <Footer />
           </MusicDetailProvider>
         </NextIntlClientProvider>

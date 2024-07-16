@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -18,7 +18,7 @@ import IcKey from "@/assets/icons/IcKey";
 import styles from "@/styles/auth/sign-up/SignUp.module.css";
 
 function SignUp() {
-  const t = useTranslations("Auth")
+  const t = useTranslations("Auth");
   const router = useRouter();
 
   const [displayName, setDisplayName] = useState("");
@@ -31,11 +31,28 @@ function SignUp() {
   const [isErrorPassword, setIsErrorPassword] = useState(false);
   const [isErrorRepeatPassword, setIsErrorRepeatPassword] = useState(false);
   const [displayToast, setDisplayToast] = useState(false);
-  
+
   const isError = useMemo(() => {
-    return isErrorDisplayName || isErrorUserName || isErrorPassword || isErrorRepeatPassword
-      || !displayName || !userName || !password || !repeatPassword
-  }, [displayName, userName, password, repeatPassword, isErrorDisplayName, isErrorUserName, isErrorPassword, isErrorRepeatPassword])
+    return (
+      isErrorDisplayName ||
+      isErrorUserName ||
+      isErrorPassword ||
+      isErrorRepeatPassword ||
+      !displayName ||
+      !userName ||
+      !password ||
+      !repeatPassword
+    );
+  }, [
+    displayName,
+    userName,
+    password,
+    repeatPassword,
+    isErrorDisplayName,
+    isErrorUserName,
+    isErrorPassword,
+    isErrorRepeatPassword,
+  ]);
 
   const handleSend = async () => {
     const body = {
@@ -47,7 +64,7 @@ function SignUp() {
 
     let responsePlaceHolder = {};
 
-    fetch("http://localhost:3000/api/auth/new", {
+    fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/new`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -59,15 +76,17 @@ function SignUp() {
         return response.json();
       })
       .then((data) => {
-        if (responsePlaceHolder.status === 200 || responsePlaceHolder.status === 201) {
+        if (
+          responsePlaceHolder.status === 200 ||
+          responsePlaceHolder.status === 201
+        ) {
           setDisplayToast(true);
           setTimeout(() => {
-            router.push('/auth/sign-in', {
-              scroll: true
-            })
+            router.push("/auth/sign-in", {
+              scroll: true,
+            });
             setDisplayToast(false);
           }, 3000);
-
         } else {
           console.log(data);
         }
@@ -80,7 +99,7 @@ function SignUp() {
     } else {
       setIsErrorDisplayName(false);
     }
-  }
+  };
 
   const handleBlurUsername = () => {
     if (!userName.match(/^.{5,32}$/)) {
@@ -88,15 +107,19 @@ function SignUp() {
     } else {
       setIsErrorUserName(false);
     }
-  }
+  };
 
   const handleBlurPassword = () => {
-    if (!password.match(/^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{8,32}$/)) {
+    if (
+      !password.match(
+        /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{8,32}$/
+      )
+    ) {
       setIsErrorPassword(true);
     } else {
       setIsErrorPassword(false);
     }
-  }
+  };
 
   const handleBlurRepeatPassword = () => {
     if (repeatPassword !== password) {
@@ -104,7 +127,7 @@ function SignUp() {
     } else {
       setIsErrorRepeatPassword(false);
     }
-  }
+  };
 
   return (
     <div className={styles["main-session"]}>
@@ -112,7 +135,7 @@ function SignUp() {
         onClose={() => setDisplayToast(false)}
         error={isError}
         errorMessage={"sign_up_fail"}
-        successMessage={t('sign_up_success')}
+        successMessage={t("sign_up_success")}
         showToast={displayToast}
       />
       <div className={styles["signup-container"]}>
@@ -148,7 +171,9 @@ function SignUp() {
               setDataState={setPassword}
               onBlur={handleBlurPassword}
               isError={isErrorPassword}
-              errorMessage={"Password must have 1 uppercase, 1 special character, 1 number and 8-32 characters"}
+              errorMessage={
+                "Password must have 1 uppercase, 1 special character, 1 number and 8-32 characters"
+              }
             />
             <Input
               value={repeatPassword}
@@ -158,7 +183,9 @@ function SignUp() {
               setDataState={setRepeatPassword}
               onBlur={handleBlurRepeatPassword}
               isError={isErrorRepeatPassword}
-              errorMessage={"Please make sure that you have correctly repeated your password!"}
+              errorMessage={
+                "Please make sure that you have correctly repeated your password!"
+              }
             />
           </div>
           <div className={styles.remember}>
@@ -167,7 +194,7 @@ function SignUp() {
               {t("i_accept")} <span className="link">{t("term_of_use")}</span>
             </span>
           </div>
-          <UploadImg onChange={setImg}/>
+          <UploadImg onChange={setImg} />
           <button className="button-1" disabled={isError} onClick={handleSend}>
             {t("send")}
           </button>

@@ -6,6 +6,7 @@ import ListAction from "@/components/layouts/HeaderComponents/ListAction";
 import MusicPlayer from "@/components/pages/content/music-detail/MusicPlayer";
 import { tracks } from "@/constants/songs(test)";
 
+
 const DetailMusic = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [selectedTrack, setSelectedTrack] = useState(null);

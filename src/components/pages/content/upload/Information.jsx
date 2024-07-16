@@ -7,7 +7,7 @@ import storage from "@/lib/firebaseConfig";
 import { getStorage, ref, uploadBytesResumable } from "firebase/storage";
 
 import FileContext from "@/store/FileProvider";
-
+import useUpload from "@/hooks/useUpload";
 
 import { slugify } from "@/utils/slugify";
 

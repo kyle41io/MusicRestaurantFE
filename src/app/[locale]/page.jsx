@@ -13,7 +13,7 @@ function Page({ data }) {
 
   // const { setIsLogin } = useContext(UserData);
 
-  // useAuth();
+  useAuth();
 
   // useEffect(() => {
   //   setIsLogin(!!localStorage.getItem("token"));

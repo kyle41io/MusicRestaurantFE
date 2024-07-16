@@ -10,7 +10,7 @@ import { useTranslations } from "next-intl";
 function UploadImg({ onChange }) {
   const t = useTranslations("Auth")
 
-  const [fileName, setFileName] = useState(t('no_file_chosen'));
+  const [fileName, setFileName] = useState();
 
   const handleChange = (event) => {
     onChange(event.target.files[0])

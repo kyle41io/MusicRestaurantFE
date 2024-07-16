@@ -9,6 +9,8 @@ const Modal = ({
   buttonTitle = "Save",
   body,
   onClose,
+  height = "147px",
+  width = "393px"
 }) => {
 
 
@@ -32,7 +34,6 @@ const Modal = ({
           {/* Main modal */}
           <div
             className={`translate
-              h-[147px] 
               border-0 
               rounded-lg 
               shadow-lg 
@@ -40,11 +41,11 @@ const Modal = ({
               flex 
               p-3
               flex-col 
-              w-[393px]
               bg-white 
               gap-5
               outline-none 
               focus:outline-none ${className}`}
+              style={{height: `${height}`, width: `${width}` }}
           >
             {/* Header */}
             <header className="flex justify-between">
@@ -58,7 +59,7 @@ const Modal = ({
             </header>
 
             {/* Body */}
-            <div className="flex-auto items-center text-xs font-normal rounded">
+            <div className="flex-auto items-center justify-items-center text-xs font-normal rounded">
               {body}
             </div>
 
@@ -66,7 +67,7 @@ const Modal = ({
               <button className="text-primaryGray p-1" onClick={onClose}>
                 Cancel
               </button>
-              <button className="text-white border rounded bg-primaryError py-[2px] px-2">
+              <button className="text-white border rounded bg-primary py-[2px] px-2">
                 {buttonTitle}
               </button>
             </footer>

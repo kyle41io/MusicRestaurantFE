@@ -23,6 +23,7 @@ export default function MusicDetailProvider({ children }) {
   const [isLiked, setIsLiked] = useState(false);
   const [songVolume, setSongVolume] = useState(50);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showUserModal, setShowUserModal] = useState(false);
   const [userData, setUserData] = useState("");
 
   return (
@@ -54,6 +55,8 @@ export default function MusicDetailProvider({ children }) {
         setSongVolume,
         showDeleteModal,
         setShowDeleteModal,
+        showUserModal,
+        setShowUserModal,
         userData,
         setUserData,
       }}

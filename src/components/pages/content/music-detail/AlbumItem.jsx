@@ -1,16 +1,42 @@
 "use client";
+import { useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
+
 import { IoStatsChartSharp } from "react-icons/io5";
+import ToastMessage from "@/components/shared/ToastMessage";
+import styles from "@/styles/auth/sign-in/SignIn.module.css";
 
 export default function AlbumItem({ track, setIsPlaying, isPlaying }) {
+
+  const [displayToast, setDisplayToast] = useState(false);
+  const [displayToast2, setDisplayToast2] = useState(false);
+  const [responseData, setResponseData] = useState("ĐÃ chọn nhạc");
+
+  const t = useTranslations("Auth");
+
   const handlePlayClick = () => {
+    setDisplayToast(true);
     setIsPlaying(); // Make sure to pass track information if needed
   };
 
   return (
     <>
+    <div className="">      
+      <ToastMessage
+        onClose={() => setDisplayToast(false)}
+        error={false}
+        successMessage={responseData}
+        showToast={displayToast}
+      />
+      <ToastMessage
+        onClose={() => setDisplayToast2(false)}
+        error={true}
+        errorMessage={responseData}
+        showToast={displayToast2}
+      /></div>
       <div
         className="w-full h-20 flex py-2 px-3 gap-4 items-center hover:bg-secondaryGray cursor-pointer"
-        onClick={setIsPlaying}
+        onClick={handlePlayClick}
       >
         <div className="w-[12px]">
           {isPlaying ? (

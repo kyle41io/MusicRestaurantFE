@@ -17,7 +17,7 @@ import logo from "@/assets/images/logo.png";
 
 export default function Header() {
   const { userData } = useContext(DetailProvider);
-  // const useAuthentication = useAuth();
+  const useAuthentication = useAuth();
   const trans = useTranslations("Header");
   const translate = useTranslations("Auth");
 

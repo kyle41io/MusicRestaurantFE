@@ -183,7 +183,7 @@ export default function Footer() {
             {/* Information */}
             <div className="w-[35,7%] h-full flex items-center border-l gap-4 border-l-secondaryGray relative">
               <Image
-                src={avatar.src}
+                src={tracks[currentIndex].image}
                 width={46}
                 height={46}
                 alt="avatar"
@@ -192,9 +192,9 @@ export default function Footer() {
 
               {/* Song info */}
               <div className="flex flex-col h-full mt-3">
-                <p className="text-xs text-primaryGray mb-1">N B D</p>
+                <p className="text-xs text-primaryGray mb-1">{tracks[currentIndex].singer}</p>
                 <h5 className="text-sm text-thirdBlack uppercase">
-                  Mặt mộc | Phạm Nguyên Ngọc x Vanh x Ân Nhi{" "}
+                {tracks[currentIndex].songName}
                 </h5>
               </div>
 
@@ -223,9 +223,6 @@ export default function Footer() {
                       <IoMdClose size={24} />
                     </div>
                   </div>
-                  <CurrentPlaylistItem />
-                  <CurrentPlaylistItem />
-                  <CurrentPlaylistItem />
                   <CurrentPlaylistItem />
                   <CurrentPlaylistItem />
                   <CurrentPlaylistItem />
