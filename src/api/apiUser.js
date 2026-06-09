@@ -1,6 +1,10 @@
 import { API_ROUTE } from "@/constants/apiRoute";
 import api from "@/lib/axios";
 
-export const signUp = (payload) => {
-  return api.post(API_ROUTE.USER, payload);
+export const getUser = (id) => {
+  return api.get(`${API_ROUTE.USERS}/${id}`);
+};
+
+export const getUsers = () => {
+  return api.get(`${API_ROUTE.USERS}/all`);
 };

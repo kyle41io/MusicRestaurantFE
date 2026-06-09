@@ -1,73 +1,46 @@
 "use client";
-import Image from "next/image";
-
-import { DetailProvider } from "@/store/MusicDetailProvider";
-
-import { useContext} from "react";
-
-import useSongControl from "@/hooks/useSongControl";
-
-import SongControl from "./SongControl";
-
-import avatar from "@/assets/images/song_detail_avatar.png";
-import { tracks } from "@/constants/songs(test)";
-
-
-const MAX = 100;
-
-export default function MusicPlayer() {
-  const {
-    songProgressValue,
-    setSongProgressValue,
-    progressBarRef,
-    currentIndex,
-  } = useContext(DetailProvider);
-  // const { songProgressValue, progressBarRef } = useContext(DetailProvider);
-  const { onSongProgressChange } = useSongControl();
-
-  const getBackgroundSize = () => {
-    return { backgroundSize: `${(songProgressValue * 100) / MAX}% 100%` };
-  };
+export default function MusicPlayer({ track, playlist }) {
+  if (!track) {
+    return (
+      <div className="w-full h-[180px] bg-primaryBlack flex items-center justify-center text-white">
+        Select a song to play
+      </div>
+    );
+  }
 
   return (
-    <div className="w-full flex-col h-[180px] bg-primaryBlack">
+    <div className="w-full flex-col bg-primaryBlack">
       <section className="flex p-5 justify-between">
         <div className="flex rounded gap-6">
-          <Image
-            src={tracks[currentIndex].image}
-            width={98}
-            height={98}
+          <img
+            src={track.image}
             alt="Song image"
-            className="rounded"
+            className="w-[98px] h-[98px] rounded object-cover"
           />
           <div className="flex flex-col">
             <h2 className="text-2xl font-normal text-white capitalize">
-            {tracks[currentIndex].songName}
+              {track.songName}
             </h2>
             <h4 className="text-xs font-normal text-white capitalize">
-            {tracks[currentIndex].singer}
+              {track.singer}
             </h4>
           </div>
         </div>
 
         <p className="w-[93px] h-[22px] rounded-xl bg-primaryGray flex justify-center items-center text-white text-xs">
-          # Pop Ballad
+          # {playlist?.playlistName || "Playlist"}
         </p>
       </section>
 
-      {/* Song progress */}
-      <div className="-mt-5 mb-1">
-        <input
-          ref={progressBarRef}
-          type="range"
-          className="music_player"
-          value={songProgressValue}
-          onChange={onSongProgressChange}
-          style={getBackgroundSize()}
+      <div className="w-full aspect-video bg-black">
+        <iframe
+          className="w-full h-full"
+          src={`${track.embedUrl}?autoplay=1&rel=0`}
+          title={track.title}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowFullScreen
         />
       </div>
-
-      <SongControl />
     </div>
   );
 }

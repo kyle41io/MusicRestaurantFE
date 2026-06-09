@@ -13,8 +13,16 @@ function UploadImg({ onChange }) {
   const [fileName, setFileName] = useState();
 
   const handleChange = (event) => {
-    onChange(event.target.files[0])
-    setFileName(event.target.files[0].name);
+    const file = event.target.files?.[0];
+
+    if (!file) {
+      onChange(undefined);
+      setFileName("");
+      return;
+    }
+
+    onChange(file)
+    setFileName(file.name);
   };
 
   return (

@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useReducer, useRef, useState } from "react";
-
-import TOP_PLAYLIST from "@/constants/topPlaylist";
+import Link from "next/link";
 
 import styles from "@/styles/content/home/Slider.module.css";
+import { normalizePlaylistSong } from "@/utils/playlistSongs";
 
 function Slider({ topPlayList_t, list }) {
   const sliderRef = useRef();
@@ -77,21 +77,34 @@ function Slider({ topPlayList_t, list }) {
       </div>
       <div className={styles["main-slider"]} ref={containerRef}>
         <div className={styles["slider"]} ref={sliderRef}>
-          {TOP_PLAYLIST.map((item, index) => (
-            <div className={styles["card"]} key={index}>
+          {(list || []).map((item, index) => {
+            const firstSong = normalizePlaylistSong(item.songList?.[0]);
+            const image = item.image || firstSong.thumbnail;
+
+            return (
+            <Link
+              href={`/music-detail?playlistId=${item.id}`}
+              className={styles["card"]}
+              key={item.id || index}
+            >
               <div className={styles["views"]}>
                 <div className="headphones"></div>
                 <span className="text-xs text-white">
-                  {formatViews(item.views)}
+                  {formatViews(item.view || 0)}
                 </span>
               </div>
               <div className={styles["info"]}>
-                <p className={styles["member-name"]}>{item.member}</p>
-                <p className={styles["playlist-name"]}>{item.title}</p>
+                <p className={styles["member-name"]}>User #{item.userId}</p>
+                <p className={styles["playlist-name"]}>{item.playlistName}</p>
               </div>
-              <img src={item.img_src} className={styles["img"]} />
-            </div>
-          ))}
+              {image ? (
+                <img src={image} alt={item.playlistName} className={styles["img"]} />
+              ) : (
+                <div className={`${styles["img"]} w-full h-full bg-secondaryGray`} />
+              )}
+            </Link>
+            );
+          })}
         </div>
       </div>
     </div>

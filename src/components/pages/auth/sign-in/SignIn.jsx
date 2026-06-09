@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 import Link from "next/link";
 import Input from "@/components/shared/Input";
 import ToastMessage from "@/components/shared/ToastMessage";
+import { signIn } from "@/api/apiAuth";
 
 import IcPerson from "@/assets/icons/IcPerson";
 import IcLock from "@/assets/icons/IcLock";
@@ -30,44 +31,30 @@ const SignIn = () => {
     [userName, passWord, isErrorUsername, isErrorPassword]
   );
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const requestBody = {
       username: userName,
       password: passWord,
     };
 
-    let responseHolder = {};
-
-    fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/auth`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(requestBody),
-    })
-      .then((response) => {
-        responseHolder = response;
-        return response.json();
-      })
-      .then((data) => {
-        if (responseHolder.status === 200 || responseHolder.status === 201) {
-          setDisplayToast(true);
-          setTimeout(() => {
-            router.push("/home", {
-              scroll: true,
-            });
-            setDisplayToast(false);
-          }, 3000);
-          localStorage.setItem("token", data.token);
-          localStorage.setItem("id", data.userId);
-        } else {
-          setResponseData(data.message);
-          setDisplayToast2(true);
-          setTimeout(() => {
-            setDisplayToast2(false);
-          }, 3000);
-        }
-      });
+    try {
+      const data = await signIn(requestBody);
+      setDisplayToast(true);
+      setTimeout(() => {
+        router.push("/home", {
+          scroll: true,
+        });
+        setDisplayToast(false);
+      }, 3000);
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("id", data.userId);
+    } catch (error) {
+      setResponseData(error.response?.data?.message || "Login failed");
+      setDisplayToast2(true);
+      setTimeout(() => {
+        setDisplayToast2(false);
+      }, 3000);
+    }
   };
 
   const handleBlurUsername = () => {

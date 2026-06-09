@@ -3,7 +3,8 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import useUpload from "@/hooks/useUpload";
+import uploadFile from "@/hooks/useUpload";
+import { signUp as createAccount } from "@/api/apiAuth";
 
 import Input from "@/components/shared/Input";
 import UploadImg from "./UploadImg";
@@ -55,42 +56,35 @@ function SignUp() {
   ]);
 
   const handleSend = async () => {
+    let image = "";
+
+    if (img) {
+      try {
+        image = await uploadFile(img);
+      } catch (error) {
+        console.warn("Avatar upload failed. Continuing signup without avatar.", error);
+      }
+    }
+
     const body = {
       name: displayName,
       username: userName,
       password: password,
-      image: await useUpload(img),
+      image,
     };
 
-    let responsePlaceHolder = {};
-
-    fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/new`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
-    })
-      .then((response) => {
-        responsePlaceHolder = response;
-        return response.json();
-      })
-      .then((data) => {
-        if (
-          responsePlaceHolder.status === 200 ||
-          responsePlaceHolder.status === 201
-        ) {
-          setDisplayToast(true);
-          setTimeout(() => {
-            router.push("/auth/sign-in", {
-              scroll: true,
-            });
-            setDisplayToast(false);
-          }, 3000);
-        } else {
-          console.log(data);
-        }
-      });
+    try {
+      await createAccount(body);
+      setDisplayToast(true);
+      setTimeout(() => {
+        router.push("/auth/sign-in", {
+          scroll: true,
+        });
+        setDisplayToast(false);
+      }, 3000);
+    } catch (error) {
+      console.log(error.response?.data || error);
+    }
   };
 
   const handleBlurDisplayName = () => {

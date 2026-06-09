@@ -2,8 +2,6 @@
 
 import { createContext, useRef, useState } from "react";
 
-import { tracks } from "@/constants/songs(test)";
-
 export const DetailProvider = createContext();
 
 export default function MusicDetailProvider({ children }) {
@@ -13,7 +11,8 @@ export default function MusicDetailProvider({ children }) {
   const volumeBarRef = useRef(null);
 
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [track, setTrack] = useState(tracks[currentIndex]);
+  const [tracks, setTracks] = useState([]);
+  const [track, setTrack] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isRepeat, setIsRepeat] = useState(false);
   const [isShuffle, setIsShuffle] = useState(false);
@@ -35,6 +34,8 @@ export default function MusicDetailProvider({ children }) {
         volumeBarRef,
         currentIndex,
         setCurrentIndex,
+        tracks,
+        setTracks,
         track,
         setTrack,
         isPlaying,

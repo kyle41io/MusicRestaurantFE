@@ -1,7 +1,5 @@
 import { useContext } from "react";
 
-import { tracks } from "@/constants/songs(test)";
-
 import { formatTime } from "@/utils";
 
 import { DetailProvider } from "@/store/MusicDetailProvider";
@@ -10,6 +8,7 @@ export default function useSongControl() {
   const {
     currentIndex,
     setCurrentIndex,
+    tracks,
     setTrack,
     audioRef,
     setIsPlaying,
@@ -19,7 +18,7 @@ export default function useSongControl() {
 
   const handlePlayPrev = () => {
     const audio = audioRef.current;
-    if (audio) {
+    if (audio && tracks.length) {
       const prevIndex = (currentIndex - 1 + tracks.length) % tracks.length;
       setCurrentIndex(prevIndex);
       setTrack(tracks[prevIndex]);
@@ -31,7 +30,7 @@ export default function useSongControl() {
 
   const handlePlayNext = () => {
     const audio = audioRef.current;
-    if (audio) {
+    if (audio && tracks.length) {
       const nextIndex = (currentIndex + 1) % tracks.length;
       setCurrentIndex(nextIndex);
       setTrack(tracks[nextIndex]);

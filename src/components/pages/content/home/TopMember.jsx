@@ -1,28 +1,17 @@
-import TOP_MEMBERS from "@/constants/topMembers";
 import { useEffect, useState } from "react";
-import axios from "axios";
-
-import IcPlayWhite from "@/assets/icons/IcPlayWhite";
+import { getUsers } from "@/api/apiUser";
+import { useTranslations } from "next-intl";
 
 import styles from "@/styles/content/home/TopMember.module.css";
 
-function TopMember({ t, list }) {
+function TopMember() {
+  const t = useTranslations("Home");
   const [users, setUsers] = useState([]);
-
-  const formatViews = (view) => {
-    if (view > 1000) {
-      return (view / 1000).toFixed(3);
-    } else {
-      return view;
-    }
-  };
 
   useEffect(() => {
     const fetchUserDetails = async () => {
       try {
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/api/users/all`
-        );
+        const response = await getUsers();
   
         const items = response.data;
         const details = items.map((item) => ({

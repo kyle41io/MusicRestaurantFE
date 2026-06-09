@@ -9,7 +9,7 @@ export default function ResultBox() {
       style={{ boxShadow: "0px 4px 4px 0px rgba(171, 171, 171, 0.25)" }}
     >
       <span className="inline-block mb-3 px-6 text-sm font-medium text-thirdBlack">
-        Result for "Anh"
+        Result for &quot;Anh&quot;
       </span>
       <li className="flex items-center gap-2 px-6 h-8 text-xs font-normal hover:bg-gray-100 cursor-pointer">
         <HiOutlineSearch size={20} />

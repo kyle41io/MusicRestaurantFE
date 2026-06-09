@@ -1,20 +1,24 @@
 "use client";
 import { useRouter } from "next/navigation";
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useMemo, useState } from "react";
 
 import FileContext from "@/store/FileProvider";
-import { getStorage, ref, getDownloadURL, uploadBytes } from "firebase/storage";
 
 import CopyIcon from "@/assets/icons/CopyIcon";
 
 const Complete = ({ t }) => {
   const router = useRouter();
 
-  const { infoPlaylist, uploadedImageFile } = useContext(FileContext);
-  const { title, artist, genre, ref } = infoPlaylist;
+  const { infoPlaylist, uploadedImageFile, createdPlaylist } =
+    useContext(FileContext);
+  const { title, artist, genre } = infoPlaylist;
 
   const [copySuccess, setCopySuccess] = useState(false);
-  const [audioURL, setAudioURL] = useState("");
+
+  const playlistUrl = useMemo(() => {
+    if (!createdPlaylist?.id || typeof window === "undefined") return "";
+    return `${window.location.origin}/music-detail?playlistId=${createdPlaylist.id}`;
+  }, [createdPlaylist?.id]);
 
   const handleCopyLink = () => {
     const linkInput = document.getElementById("link-input");
@@ -26,25 +30,6 @@ const Complete = ({ t }) => {
       setCopySuccess(false);
     }, 2000);
   };
-
-  // useEffect(() => {
-  //   const storage = getStorage();
-  //   const storageRef = ref;
-
-  //   uploadBytes(storageRef, uploadedImageFile)
-  //     .then((snapshot) => {
-  //       getDownloadURL(snapshot.ref)
-  //         .then((url) => {
-  //           setAudioURL(url);
-  //         })
-  //         .catch((error) => {
-  //           console.log(error);
-  //         });
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //     });
-  // }, [uploadedImageFile, ref]);
 
   return (
     <div className="flex flex-col items-center p-14 gap-6 ">
@@ -73,9 +58,9 @@ const Complete = ({ t }) => {
                 id="link-input"
                 name="link"
                 type="text"
-                placeholder={audioURL ? "" : "loading..."}
+                placeholder={playlistUrl ? "" : "Playlist created"}
                 className="bg-slate-100/50 w-3/4 text-blue-600 p-2 pr-10 text-xs h-7"
-                value={audioURL}
+                value={playlistUrl}
                 readOnly
               />
               <div
@@ -86,7 +71,14 @@ const Complete = ({ t }) => {
                   <CopyIcon />
                 </span>
               </div>
-              <button className="text-sm ml-2 bg-primary hover:bg-orange-700 rounded p-1 px-2 text-white">
+              <button
+                className="text-sm ml-2 bg-primary hover:bg-orange-700 rounded p-1 px-2 text-white"
+                onClick={() => {
+                  if (createdPlaylist?.id) {
+                    router.push(`/music-detail?playlistId=${createdPlaylist.id}`);
+                  }
+                }}
+              >
                 {t("play_now")}
               </button>
               {copySuccess && (

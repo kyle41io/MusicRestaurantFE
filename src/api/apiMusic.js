@@ -2,8 +2,18 @@ import { API_ROUTE } from "@/constants/apiRoute";
 import api from "@/lib/axios";
 
 export const getMusic = (search, page) => {
-  return api.get(`${API_ROUTE.MUSIC}?search=${search}&page=${page}`);
+  return api.get(API_ROUTE.MUSICS, {
+    params: {
+      search,
+      page,
+    },
+  });
 };
-export const listenMusic = (id) => {
-  return api.post(`${API_ROUTE.MUSIC}/id=${id}`);
+
+export const downloadMusic = (id) => {
+  return api.get(`${API_ROUTE.MUSICS}/${id}`);
+};
+
+export const streamMusic = (id) => {
+  return `${api.defaults.baseURL}${API_ROUTE.STREAMS}/${id}`;
 };

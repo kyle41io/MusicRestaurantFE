@@ -1,17 +1,16 @@
 "use client";
 import React, { useEffect, useRef, useState, useContext } from "react";
 import Link from "next-intl/link";
-import axios from "axios";
-import Image from "next/image";
 import { BiSolidChevronDown } from "react-icons/bi";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { DetailProvider } from "@/store/MusicDetailProvider";
+import { getUser } from "@/api/apiUser";
 
 
 export default function UserAvatar() {
   const router = useRouter();
-  const userId = localStorage.getItem("id");
+  const userId = typeof window !== "undefined" ? localStorage.getItem("id") : "";
 
   const { setShowUserModal } = useContext(DetailProvider);
 
@@ -30,18 +29,17 @@ export default function UserAvatar() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/api/users/${userId}`
-        );
+        if (!userId) return;
+        const response = await getUser(userId);
         const userData = response.data;
-        setAvatarSrc(userData.image);
+        setAvatarSrc(userData.avatar);
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
     };
 
     fetchUserData();
-  }, []);
+  }, [userId]);
 
   useEffect(() => {
     const clickOutside = (e) => {

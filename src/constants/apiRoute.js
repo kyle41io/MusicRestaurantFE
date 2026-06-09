@@ -1,10 +1,11 @@
 export const API_ROUTE = {
-  AUTH: "/auth",
-  USER: "/user",
-  PLAYPLIST: "/playlist",
-  MUSIC: "/music",
-  STREAM: "/stream",
-  COMMENT: "/comment",
-  LIKE: "/like",
+  AUTH: "/api/auth",
+  AUTH_NEW: "/api/auth/new",
+  USERS: "/api/users",
+  PLAYLISTS: "/api/playlists",
+  MUSICS: "/api/musics",
+  STREAMS: "/api/streams",
+  COMMENTS: "/api/comments",
+  LIKES: "/api/likes",
   ROOM: "/room",
 };

@@ -1,59 +1,29 @@
-import { useEffect, useState, useContext } from "react";
+import { useState, useContext } from "react";
 import Image from "next/image";
 import SearchImage from "@/assets/images/search.png";
 import SearchIcon from "@/assets/icons/SearchIcon";
-import axios from "axios";
 import { FaTrashAlt } from "react-icons/fa";
 
 import FileContext from "@/store/FileProvider";
+import { createPlaylist } from "@/api/apiPlaylist";
+import { getMusic } from "@/api/apiMusic";
+import {
+  serializePlaylistSong,
+  youtubeEmbedUrl,
+  youtubeWatchUrl,
+} from "@/utils/playlistSongs";
 
 const SelectedSongs = ({ selectedSongs, setSelectedSongs }) => {
-  const [songDetails, setSongDetails] = useState([]);
-
-  useEffect(() => {
-    const fetchSongDetails = async () => {
-      try {
-        const response = await axios.get(
-          "https://www.googleapis.com/youtube/v3/videos",
-          {
-            params: {
-              id: selectedSongs.join(","),
-              part: "snippet",
-              key: `${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`,
-            },
-          }
-        );
-
-        const items = response.data.items;
-        const details = items.map((item) => ({
-          id: item.id,
-          title: item.snippet.title,
-          thumbnail: item.snippet.thumbnails.medium.url,
-        }));
-
-        setSongDetails(details);
-      } catch (error) {
-        console.error("Error fetching song details:", error);
-      }
-    };
-
-    if (selectedSongs.length > 0) {
-      fetchSongDetails();
-    } else {
-      setSongDetails([]);
-    }
-  }, [selectedSongs]);
-
   const handleRemoveSong = (songId) => {
     setSelectedSongs((prevSelectedSongs) =>
-      prevSelectedSongs.filter((id) => id !== songId)
+      prevSelectedSongs.filter((song) => song.id !== songId)
     );
   };
 
   return (
     <div className="mt-6">
       <h3 className="text-lg font-medium">Selected Songs:</h3>
-      {songDetails.map((song) => (
+      {selectedSongs.map((song) => (
         <div key={song.id} className="mt-2 flex items-center px-2">
           <div className="w-28 h-28 flex justify-center items-center">
             <img
@@ -80,91 +50,111 @@ const SelectedSongs = ({ selectedSongs, setSelectedSongs }) => {
 };
 
 const AddSong = ({ setCurrentStep, setShowToast, setError, t }) => {
-  const { infoPlaylist, uploadedImageFile } = useContext(FileContext);
-  const { title, artist, genre, ref } = infoPlaylist;
+  const { infoPlaylist, uploadedImageFile, setCreatedPlaylist } =
+    useContext(FileContext);
+  const { title } = infoPlaylist;
 
-  if (typeof window !== 'undefined') {var userId = localStorage.getItem("id");}
+  const userId = typeof window !== "undefined" ? localStorage.getItem("id") : "";
 
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [selectedSongs, setSelectedSongs] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchError, setSearchError] = useState("");
 
   const formatDate = (timestamp) => {
+    if (!timestamp) return "";
     const date = new Date(timestamp);
+    if (Number.isNaN(date.getTime())) return timestamp;
     const month = (date.getMonth() + 1).toString().padStart(2, "0");
     const year = date.getFullYear().toString();
     return `${month}-${year}`;
   };
 
   const handleSearch = async () => {
-    try {
-      const response = await axios.get(
-        "https://www.googleapis.com/youtube/v3/search",
-        {
-          params: {
-            q: searchTerm,
-            part: "snippet",
-            type: "video",
-            videoCategoryId: 10,
-            maxResults: 5,
-            videoDuration: "medium",
-            key: `${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`,
-          },
-        }
-      );
+    if (!searchTerm.trim()) return;
 
-      const items = response.data.items;
-      const results = items.map((item) => ({
-        id: item.id.videoId,
-        title: item.snippet.title,
-        thumbnail: item.snippet.thumbnails.medium.url,
-        channelTitle: item.snippet.channelTitle,
-        publishedAt: item.snippet.publishedAt,
-      }));
+    setIsSearching(true);
+    setSearchError("");
+
+    try {
+      const response = await getMusic(searchTerm, 1);
+      const items = response.data?.data || [];
+      const results = items
+        .map((item) => {
+          const youtubeId = item.id?.videoId || item.videoId || item.id;
+          const thumbnail =
+            item.snippet?.thumbnails?.medium?.url ||
+            item.snippet?.thumbnails?.default?.url ||
+            item.snippet?.thumbnails?.url ||
+            item.thumbnail;
+
+          return {
+            id: youtubeId,
+            youtubeId,
+            title: item.snippet?.title || item.title,
+            thumbnail,
+            image: thumbnail,
+            playbackUrl: youtubeWatchUrl(youtubeId),
+            embedUrl: youtubeEmbedUrl(youtubeId),
+            source: "youtube",
+            duration: item.duration || item.duration_raw || "",
+            channelTitle: item.channel?.name || item.snippet?.channelTitle || "",
+            publishedAt: item.snippet?.publishedAt || "",
+          };
+        })
+        .filter((item) => item.youtubeId && item.title);
 
       setSearchResults(results);
     } catch (error) {
+      setSearchError("Can not search YouTube right now. Please try again.");
       console.error("Error searching videos:", error);
-      // Handle error
+    } finally {
+      setIsSearching(false);
     }
   };
 
 
   const handleAddsong = async () => {
+    if (!selectedSongs.length) {
+      setError?.(true);
+      setShowToast?.(true);
+      return;
+    }
+
+    const playlistImage =
+      typeof uploadedImageFile === "string" &&
+      uploadedImageFile.startsWith("http")
+        ? uploadedImageFile
+        : "";
+
     const body = {
       playlistName: title,
-      songList: selectedSongs,
-      userId: userId,
-      image: uploadedImageFile
+      songList: selectedSongs.map(serializePlaylistSong),
+      userId: Number(userId),
+      image: playlistImage,
     };
 
-    let responsePlaceHolder = {};
-
-    fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/playlists`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
-    })
-      .then((response) => {
-        responsePlaceHolder = response;
-        return response.json();
-      })
-
-      setCurrentStep(3)
+    try {
+      const response = await createPlaylist(body);
+      setCreatedPlaylist?.(response.data);
+      setCurrentStep(3);
+    } catch (error) {
+      setError?.(true);
+      setShowToast?.(true);
+      console.error("Error creating playlist:", error);
+    }
   };
 
-  const handleAddSong = (songId) => {
-    setSelectedSongs((prevSelectedSongs) => [...prevSelectedSongs, songId]);
+  const handleAddSong = (song) => {
+    setSelectedSongs((prevSelectedSongs) => {
+      if (prevSelectedSongs.some((selectedSong) => selectedSong.id === song.id)) {
+        return prevSelectedSongs;
+      }
+      return [...prevSelectedSongs, song];
+    });
     setSearchResults([]);
   };
-
-  useEffect(() => {
-    return () => {
-      console.log(selectedSongs);
-    };
-  });
 
   return (
     <div>
@@ -181,10 +171,15 @@ const AddSong = ({ setCurrentStep, setShowToast, setError, t }) => {
           <button
             className="absolute flex justify-center items-center rounded-md right-5 top-1/2 -translate-y-1/2 bg-transparent border-none cursor-pointer w-7 h-7 z-0opacity-50"
             onClick={handleSearch}
+            disabled={isSearching}
           >
             <SearchIcon />
           </button>
         </div>
+
+        {searchError && (
+          <p className="w-full text-left text-xs text-red-500">{searchError}</p>
+        )}
 
         {searchResults.length > 0 && (
           <div className="absolute top-16 w-full mt-4 bg-white">
@@ -193,7 +188,7 @@ const AddSong = ({ setCurrentStep, setShowToast, setError, t }) => {
                 <div
                   className="flex justify-start gap-3  items-center min-h-24 w-full border hover:bg-slate-300 border-t-[#DCDCDC]"
                   key={index}
-                  onClick={() => handleAddSong(result.id)}
+                  onClick={() => handleAddSong(result)}
                 >
                   <div className="w-28 h-28 flex justify-center items-center">
                     <img
@@ -219,6 +214,11 @@ const AddSong = ({ setCurrentStep, setShowToast, setError, t }) => {
 
         <div className="">
           <Image src={SearchImage} alt="" width={200} height={200} />
+          {isSearching && (
+            <p className="text-center text-xs text-primaryGray mt-2">
+              Searching YouTube...
+            </p>
+          )}
         </div>
 
         <div className="w-full flex justify-end text-sm gap-2">

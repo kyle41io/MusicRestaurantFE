@@ -23,7 +23,7 @@ const HomePage = () => {
             <MyPlaylist />
           </div>
           <div className="right-container">
-            <TopMember t={t} />
+            <TopMember />
           </div>
         </div>
       </div>

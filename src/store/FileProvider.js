@@ -12,6 +12,7 @@ export const FileProvider = ({ children }) => {
     ref: null,
   });
   const [uploadedImageFile, setUploadedImageFile] = useState(null);
+  const [createdPlaylist, setCreatedPlaylist] = useState(null);
   const [openModal, setOpenModal] = useState(false);
 
   return (
@@ -21,6 +22,8 @@ export const FileProvider = ({ children }) => {
         setInfoPlaylist,
         uploadedImageFile,
         setUploadedImageFile,
+        createdPlaylist,
+        setCreatedPlaylist,
         openModal,
         setOpenModal,
       }}

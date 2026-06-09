@@ -1,13 +1,9 @@
 "use client";
-import Image from "next/image";
-
 import { DetailProvider } from "@/store/MusicDetailProvider";
 
 import { useContext, useEffect, useRef, useState } from "react";
 
 import useSongControl from "@/hooks/useSongControl";
-
-import { tracks } from "@/constants/songs(test)";
 
 import { formatTime } from "@/utils";
 
@@ -18,8 +14,6 @@ import ButtonControl from "../pages/content/music-detail/ButtonControl";
 import { MdPlaylistPlay } from "react-icons/md";
 import { BsHeart, BsHeartFill } from "react-icons/bs";
 import { IoMdClose } from "react-icons/io";
-
-import avatar from "@/assets/images/avatar.png";
 
 export default function Footer() {
   const {
@@ -36,6 +30,8 @@ export default function Footer() {
     setSongVolume,
     currentIndex,
     setCurrentIndex,
+    tracks,
+    track,
     isPlaying,
     isRepeat,
     setIsPlaying,
@@ -49,6 +45,8 @@ export default function Footer() {
 
   const [showVolumeBar, setShowVolumeBar] = useState(false);
   const [showPlaylist, setShowPlaylist] = useState(false);
+
+  const currentTrack = track || tracks[currentIndex];
 
   const MAX = 100;
   const getBackgroundSize = () => {
@@ -94,20 +92,20 @@ export default function Footer() {
 
   useEffect(() => {
     const audio = audioRef.current;
-    if (audio) {
+    if (audio && tracks.length) {
       const handleTrackEnded = () => {
         if (isRepeat) {
           audio.currentTime = 0;
         } else if (isShuffle) {
-          let randomIndex = Math.floor(Math.random() * (tracks.length + 1));
+          let randomIndex = Math.floor(Math.random() * tracks.length);
           setCurrentIndex(randomIndex);
           setTrack(tracks[randomIndex]);
-          audio.src = tracks[randomIndex].path;
+          audio.src = tracks[randomIndex]?.path || "";
         } else {
           const nextIndex = (currentIndex + 1) % tracks.length;
           setCurrentIndex(nextIndex);
           setTrack(tracks[nextIndex]);
-          audio.src = tracks[nextIndex].path;
+          audio.src = tracks[nextIndex]?.path || "";
         }
         setIsPlaying(true);
         audio.play();
@@ -127,9 +125,9 @@ export default function Footer() {
     }
   }, [songVolume, audioRef.current]);
 
+  if (!userData || !currentTrack) return null;
+
   return (
-    <>
-      {userData ? (
         <section className="fixed bottom-0 flex justify-center w-full bg-thirdGray items-center z-50">
           <div className="h-[72px] 2xl:w-[1400px] xl:w-[1200px] lg:w-[1000px] md:w-[750px] sm:w-[600px] w-[350px] justify-between flex gap-6 items-center">
             <ButtonControl />
@@ -140,7 +138,7 @@ export default function Footer() {
                 className="hidden"
                 onTimeUpdate={() => onTimeUpdate()}
               >
-                <source src={tracks[currentIndex].path} type="audio/mpeg" />
+                <source src={currentTrack.path} type="audio/mpeg" />
               </audio>
               <input
                 type="range"
@@ -182,19 +180,17 @@ export default function Footer() {
             </div>
             {/* Information */}
             <div className="w-[35,7%] h-full flex items-center border-l gap-4 border-l-secondaryGray relative">
-              <Image
-                src={tracks[currentIndex].image}
-                width={46}
-                height={46}
+              <img
+                src={currentTrack.image}
                 alt="avatar"
-                className="rounded-full ml-6"
+                className="rounded-full ml-6 w-[46px] h-[46px] object-cover"
               />
 
               {/* Song info */}
               <div className="flex flex-col h-full mt-3">
-                <p className="text-xs text-primaryGray mb-1">{tracks[currentIndex].singer}</p>
+                <p className="text-xs text-primaryGray mb-1">{currentTrack.singer}</p>
                 <h5 className="text-sm text-thirdBlack uppercase">
-                {tracks[currentIndex].songName}
+                {currentTrack.songName}
                 </h5>
               </div>
 
@@ -239,7 +235,5 @@ export default function Footer() {
             />
           </div>
         </section>
-       ) : null} 
-    </>
   );
 }

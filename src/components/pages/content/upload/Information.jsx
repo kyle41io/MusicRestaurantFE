@@ -3,11 +3,8 @@
 import { useRouter } from "next/navigation";
 import React, { useContext, useState, useEffect } from "react";
 
-import storage from "@/lib/firebaseConfig";
-import { getStorage, ref, uploadBytesResumable } from "firebase/storage";
-
 import FileContext from "@/store/FileProvider";
-import useUpload from "@/hooks/useUpload";
+import uploadFile from "@/hooks/useUpload";
 
 import { slugify } from "@/utils/slugify";
 
@@ -29,6 +26,7 @@ const Information = ({ setCurrentStep, t }) => {
   const [uploadedImageURL, setUploadedImageURL] = useState(null);
   const [errorImage, setErrorImage] = useState(false);
   const [percentImage, setPercentImage] = useState(0);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [disabled, setDisabled] = useState(true);
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
@@ -41,6 +39,13 @@ const Information = ({ setCurrentStep, t }) => {
   };
 
   const handleImageUpload = (file) => {
+    if (!file) {
+      setUploadedImage(null);
+      setUploadedImageFile(null);
+      setUploadedImageURL(null);
+      return;
+    }
+
     const fileSizeInBytes = file.size;
     const maxFileSize = 5 * 1024 * 1024;
 
@@ -59,40 +64,26 @@ const Information = ({ setCurrentStep, t }) => {
   const handleNext = async () => {
     if (!title) {
       return;
-    } else {
-      if (uploadedImage) {
-        const imageFileRef = ref(
-          storage,
-          `/files/${slug}/${uploadedImage.name}`
-        );
-        const imageUploadTask = uploadBytesResumable(
-          imageFileRef,
-          uploadedImage
-        );
-        setInfoPlaylist((prevInfoPlaylist) => ({
-          ...prevInfoPlaylist,
-          ref: imageFileRef,
-        }));
+    }
 
-        imageUploadTask.on(
-          "state_changed",
-          (snapshot) => {
-            const percent = Math.round(
-              (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-            );
-            setPercentImage(percent);
-            if (percent === 100) setCurrentStep(2);
-          },
-          (error) => {
-            console.log(error);
-          },
-          async () => {}
-        );
-      }
+    if (!uploadedImage) {
+      setCurrentStep(2);
+      return;
+    }
 
-      if (!uploadedImage) {
-        setCurrentStep(2);
-      }
+    setIsUploadingImage(true);
+    setPercentImage(50);
+
+    try {
+      const downloadUrl = await uploadFile(uploadedImage);
+      setUploadedImageFile(downloadUrl || uploadedImageURL);
+      setPercentImage(100);
+    } catch (error) {
+      console.warn("Playlist cover upload failed. Continuing without remote cover.", error);
+      setUploadedImageFile(uploadedImageURL);
+    } finally {
+      setIsUploadingImage(false);
+      setCurrentStep(2);
     }
   };
 
@@ -142,7 +133,7 @@ const Information = ({ setCurrentStep, t }) => {
               type="file"
               accept=".jpg,.png"
               className="hidden"
-              onChange={(event) => handleImageUpload(event.target.files[0])}
+              onChange={(event) => handleImageUpload(event.target.files?.[0])}
               maxfilesize={5 * 1024 * 1024}
             />
             <label
@@ -211,7 +202,7 @@ const Information = ({ setCurrentStep, t }) => {
             }`}
             onClick={handleNext}
           >
-            {percentImage !== 100 && percentImage !== 0 ? (
+            {isUploadingImage || (percentImage !== 100 && percentImage !== 0) ? (
               <div className="circle">
                 <LoadingIcon />
               </div>

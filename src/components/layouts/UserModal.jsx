@@ -3,7 +3,7 @@
 import React, { useState, useMemo, useContext, useEffect } from "react";
 import { DetailProvider } from "@/store/MusicDetailProvider";
 import { useTranslations } from "next-intl";
-import axios from "axios";
+import { getUser } from "@/api/apiUser";
 
 import Modal from "../shared/Modal";
 import UploadImg from "../pages/auth/sign-up/UploadImg";
@@ -16,7 +16,7 @@ import IcKey from "@/assets/icons/IcKey";
 export default function UserModal() {
   const { showUserModal, setShowUserModal } = useContext(DetailProvider);
  
-  if (typeof window !== 'undefined') {var userId = localStorage.getItem("id");}
+  const userId = typeof window !== "undefined" ? localStorage.getItem("id") : "";
   const t = useTranslations("Auth");
 
   const [displayName, setDisplayName] = useState("");
@@ -87,11 +87,10 @@ export default function UserModal() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/api/users/${userId}`
-        );
+        if (!userId) return;
+        const response = await getUser(userId);
         const userData = response.data;
-        setAvatarSrc(userData.image);
+        setAvatarSrc(userData.avatar);
         setDisplayName(userData.name);
         setUserName(userData.username);
         setDisplayName(userData.name);
@@ -101,7 +100,7 @@ export default function UserModal() {
     };
 
     fetchUserData();
-  });
+  }, [userId]);
 
   const bodyContent = (
     <div className="flex place-items-center justify-around">
