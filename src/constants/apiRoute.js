@@ -7,5 +7,6 @@ export const API_ROUTE = {
   STREAMS: "/api/streams",
   COMMENTS: "/api/comments",
   LIKES: "/api/likes",
+  UPLOADS: "/api/uploads",
   ROOM: "/room",
 };

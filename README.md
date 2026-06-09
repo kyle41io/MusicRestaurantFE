@@ -11,7 +11,7 @@ Next.js frontend for Music Restaurant.
 - Node.js
 - npm
 - The backend project running on `http://localhost:3001`
-- Firebase config values for optional image uploads
+- Backend Cloudinary config for optional image uploads
 
 ## Environment
 
@@ -19,7 +19,6 @@ Create/update `.env` in this folder:
 
 ```env
 NEXT_PUBLIC_BASE_URL=http://localhost:3001
-NEXT_PUBLIC_FIREBASE_API_KEY=your_firebase_key
 NEXT_PUBLIC_YOUTUBE_API_KEY=optional_youtube_key_if_frontend_search_is_used
 ```
 
@@ -27,7 +26,7 @@ Important:
 - Local frontend runs on `http://localhost:3000`.
 - Local backend runs on `http://localhost:3001`.
 - `NEXT_PUBLIC_BASE_URL` must point to the backend, not the frontend.
-- Avatar upload is optional. If Firebase Storage fails, sign up still continues without an uploaded avatar.
+- Avatar/playlist image upload is optional. Signed-in uploads use the backend Cloudinary signature route.
 - Do not commit real API keys unless this repository is intentionally public-safe.
 
 ## Vercel Deployment
